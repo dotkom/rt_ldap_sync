@@ -41,3 +41,10 @@ class GroupMember(TestCase):
 
         self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
 
+    def test_remove_user_from_group(self):
+        self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
+        self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
+
+        RtGroupMember.objects.filter(group=self.group1, member=self.user1).delete()
+
+        self.assertEqual(0, RtGroupMember.objects.filter(group=self.group1).count())
