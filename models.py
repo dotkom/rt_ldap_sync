@@ -47,6 +47,9 @@ class RtUser(models.Model):
     last_updated_by = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
+    class Meta:
+        db_table = 'users'
+
 
 class RtGroup(models.Model):
     """Represents the 'groups' table in RT"""
@@ -72,3 +75,6 @@ class RtGroupMember(models.Model):
     creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False)
     last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
+
+    class Meta:
+        db_table = 'groupmembers'
