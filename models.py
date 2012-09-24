@@ -6,7 +6,8 @@ Models that represent database tables in RequestTracker
 from django.db import models
 
 
-ROOT_ID_ACCOUNT = 0
+USER_ID_DEFAULT = 0
+GROUP_ID_DEFAULT = 0
 
 class RtUser(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -40,9 +41,9 @@ class RtUser(models.Model):
     country = models.CharField(max_length=50)
     timezone = models.CharField(max_length=50)
     pgpkey = models.TextField()
-    creator = models.ForeignKey('self', default=ROOT_ID_ACCOUNT, null=False)
+    creator = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False)
     created = models.DateTimeField(auto_now=True)
-    lastupdatedby = models.ForeignKey('self', default=ROOT_ID_ACCOUNT, null=False)
+    lastupdatedby = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False)
     lastupdated = models.DateTimeField(auto_now=True)
 
 
@@ -53,9 +54,9 @@ class RtGroup(models.Model):
     domain = models.CharField(max_length=64)
     type = models.CharField(max_length=64)
     instance = models.IntegerField()
-    creator = models.ForeignKey(RtUser, default=ROOT_ID_ACCOUNT, null=False, blank=False)
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False)
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.ForeignKey(RtUser, default=ROOT_ID_ACCOUNT, null=False, blank=False, db_column='lastupdatedby')
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
@@ -63,8 +64,8 @@ class RtGroup(models.Model):
 
 class RtGroupMember(models.Model):
     id = models.IntegerField(primary_key=True)
-    group_id = models.ForeignKey(RtGroup, default=0, db_column='groupid', null=False)
-    member_id = models.ForeignKey(RtUser, default=0, db_column='memberid', null=False)
-    creator = models.ForeignKey(RtUser, default=0, null=False)
-    last_updated_by = models.ForeignKey(RtUser, default=0, null=False, db_column='lastupdatedby')
+    group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
+    member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False)
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
