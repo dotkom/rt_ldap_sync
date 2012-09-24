@@ -42,9 +42,9 @@ class RtUser(models.Model):
     country = models.CharField(max_length=50)
     timezone = models.CharField(max_length=50)
     pgpkey = models.TextField()
-    creator = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='creator')
+    creator = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='creator_set')
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby')
+    last_updated_by = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
@@ -59,9 +59,9 @@ class RtGroup(models.Model):
     domain = models.CharField(max_length=64)
     type = models.CharField(max_length=64)
     instance = models.IntegerField()
-    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='creator')
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='creator', related_name='creator_set')
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby')
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby', related_name='last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     def has_group(self, name):
@@ -78,8 +78,8 @@ class RtGroupMember(models.Model):
     id = models.IntegerField(primary_key=True)
     group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
     member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
-    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False)
-    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby')
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, related_name='creator_set')
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
