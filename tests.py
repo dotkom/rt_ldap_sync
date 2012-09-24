@@ -12,9 +12,9 @@ class Group(TestCase):
 
     def test_returns_null_if_groupname_matches_but_not_user_defined(self):
         self.assertNotEqual(USER_DEFINED, self.group2.domain)
-        self.assertFalse(RtGroup.has_group('awesomegroup'))
+        self.assertFalse(RtGroup.objects.has_group('awesomegroup'))
 
     def test_returns_true_if_group_found_and_user_defined(self):
         self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
         self.assertEqual(USER_DEFINED, self.group1.domain)
-        self.assertTrue(RtGroup.has_group('awesomegroup'))
+        self.assertTrue(RtGroup.objects.has_group('awesomegroup'))
