@@ -64,6 +64,9 @@ class RtGroup(models.Model):
     last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
+    def __repr__(self):
+        return u'%s,%s,%s' % (self.name, self.description, self.domain)
+
     class Meta:
         db_table = 'groups'
 
