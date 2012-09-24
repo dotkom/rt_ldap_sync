@@ -1,7 +1,15 @@
 """RT LDAP Sync tests"""
 from django.test import TestCase
-from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE
+from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE, RtUser
 
+
+class User(TestCase):
+    """Testcases involving User"""
+    def setUp(self):
+        self.user1 = RtUser.objects.create(name='norangsh')
+
+    def test_returns_my_username(self):
+        self.assertEqual('norangsh', self.user1.name)
 
 class Group(TestCase):
     def setUp(self):
@@ -15,3 +23,4 @@ class Group(TestCase):
         self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
         self.assertEqual(USER_DEFINED, self.group1.domain)
         self.assertTrue(RtGroup.objects.has_group('awesomegroup'))
+
