@@ -22,6 +22,3 @@ class Group(models.Model):
 
     class Meta:
         db_table = 'groups'
-
-
-
