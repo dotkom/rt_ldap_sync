@@ -40,9 +40,9 @@ class RtUser(models.Model):
     country = models.CharField(max_length=50)
     timezone = models.CharField(max_length=50)
     pgpkey = models.TextField()
-    creator = models.ForeignKey(User, default=ROOT_ID_ACCOUNT, null=False)
+    creator = models.ForeignKey('self', default=ROOT_ID_ACCOUNT, null=False)
     created = models.DateTimeField(auto_now=True)
-    lastupdatedby = models.ForeignKey(User, default=ROOT_ID_ACCOUNT, null=False)
+    lastupdatedby = models.ForeignKey('self', default=ROOT_ID_ACCOUNT, null=False)
     lastupdated = models.DateTimeField(auto_now=True)
 
 
@@ -53,9 +53,9 @@ class RtGroup(models.Model):
     domain = models.CharField(max_length=64)
     type = models.CharField(max_length=64)
     instance = models.IntegerField()
-    creator = models.IntegerField(default=ROOT_ID_ACCOUNT, null=False, blank=False)
+    creator = models.ForeignKey(RtUser, default=ROOT_ID_ACCOUNT, null=False, blank=False)
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.IntegerField(default=ROOT_ID_ACCOUNT, null=False, blank=False, db_column='lastupdatedby')
+    last_updated_by = models.ForeignKey(RtUser, default=ROOT_ID_ACCOUNT, null=False, blank=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
