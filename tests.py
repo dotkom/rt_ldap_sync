@@ -1,6 +1,6 @@
 """RT LDAP Sync tests"""
 from django.test import TestCase
-from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE, RtUser
+from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE, RtUser, RtGroupMember
 
 
 class User(TestCase):
@@ -23,4 +23,18 @@ class Group(TestCase):
         self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
         self.assertEqual(USER_DEFINED, self.group1.domain)
         self.assertTrue(RtGroup.objects.has_group('awesomegroup'))
+
+class GroupMember(TestCase):
+    """Testcases involving group membership"""
+    def setUp(self):
+        self.user1 = RtUser.objects.create(name='norangsh')
+        self.group1 = RtGroup.objects.create(name='dotkom', domain=USER_DEFINED)
+
+    def test_add_user_to_group(self):
+        try:
+            self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
+        except Exception, e:
+            print e
+            self.fail(msg='Exception thrown, see above for details')
+        
 
