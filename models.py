@@ -91,3 +91,4 @@ class RtGroupMember(models.Model):
 
     class Meta:
         db_table = 'groupmembers'
+        unique_together = ('group', 'member')

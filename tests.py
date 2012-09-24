@@ -1,6 +1,7 @@
 """RT LDAP Sync tests"""
+from django.db import IntegrityError
 from django.test import TestCase
-from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE, RtUser, RtGroupMember
+from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE, RtUser, RtGroupMember, USER_ID_DEFAULT
 
 
 class User(TestCase):
@@ -27,6 +28,7 @@ class Group(TestCase):
 class GroupMember(TestCase):
     """Testcases involving group membership"""
     def setUp(self):
+        self.root = RtUser.objects.create(name='root', id=USER_ID_DEFAULT)
         self.user1 = RtUser.objects.create(name='norangsh')
         self.group1 = RtGroup.objects.create(name='dotkom', domain=USER_DEFINED)
 
@@ -53,7 +55,5 @@ class GroupMember(TestCase):
         self.assertEqual(0, RtGroupMember.objects.filter(group=self.group1).count())
         self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
         self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
-        self.assertRaises(RtGroupMember.objects.create(group=self.group1, member=self.user1))
-        self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
-
+        self.assertRaises(IntegrityError, lambda: RtGroupMember.objects.create(group=self.group1, member=self.user1))
 
