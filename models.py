@@ -78,7 +78,7 @@ class RtGroupMember(models.Model):
     id = models.IntegerField(primary_key=True)
     group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
     member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
-    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, related_name='creator_set')
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='creator' related_name='creator_set')
     last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
