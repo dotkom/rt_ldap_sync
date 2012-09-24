@@ -14,7 +14,7 @@ class RtUser(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200, null=False)
     password = models.CharField(max_length=256)
-    authtoken = models.CharField(16)
+    authtoken = models.CharField(max_length=16)
     comments = models.TextField()
     signature = models.TextField()
     emailaddress = models.CharField(max_length=120)
