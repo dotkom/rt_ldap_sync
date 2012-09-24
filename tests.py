@@ -81,10 +81,8 @@ class GroupMember(TestCase):
         self.group_xdotkom = RtGroup.objects.create(name='xdotkom', domain=USER_DEFINED)
         RtGroupMember.objects.create(group=self.group_xdotkom, member=self.user1)
 
-        rt_groups = sorted([x.group.name for x in self.user1.rtgroupmember_set.all()])
         ldap_groups = ['dotkom', 'trollkom']
-
-        extra_ldap = filter(lambda x: x not in ldap_groups, rt_groups)
-        extra_rt = filter(lambda x: x not in rt_groups, ldap_groups)
+        extra_ldap = RtGroupMember.objects.extra_ldap_groups(self.user1, ldap_groups)
+        extra_rt = RtGroupMember.objects.extra_rt_groups(self.user1, ldap_groups)
 
         self.assertEqual(['trollkom', 'xdotkom'], sorted(extra_ldap + extra_rt))
