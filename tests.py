@@ -54,5 +54,6 @@ class GroupMember(TestCase):
         self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
         self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
         self.assertRaises(RtGroupMember.objects.create(group=self.group1, member=self.user1))
+        self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
 
-    
+
