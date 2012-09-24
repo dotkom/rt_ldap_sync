@@ -31,10 +31,13 @@ class GroupMember(TestCase):
         self.group1 = RtGroup.objects.create(name='dotkom', domain=USER_DEFINED)
 
     def test_add_user_to_group(self):
+        self.assertEqual(0, RtGroupMember.objects.filter(group=self.group1).count())
+
         try:
             self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
         except Exception, e:
             print e
             self.fail(msg='Exception thrown, see above for details')
-        
+
+        self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
 
