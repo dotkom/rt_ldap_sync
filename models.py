@@ -8,7 +8,7 @@ from django.db import models
 
 ROOT_ID_ACCOUNT = 0
 
-class User(models.Model):
+class RtUser(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200, null=False)
     password = models.CharField(max_length=256)
@@ -46,7 +46,7 @@ class User(models.Model):
     lastupdated = models.DateTimeField(auto_now=True)
 
 
-class Group(models.Model):
+class RtGroup(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255)
@@ -61,10 +61,10 @@ class Group(models.Model):
     class Meta:
         db_table = 'groups'
 
-class GroupMember(models.Model):
+class RtGroupMember(models.Model):
     id = models.IntegerField(primary_key=True)
-    group_id = models.ForeignKey(Group, default=0, db_column='groupid', null=False)
-    member_id = models.ForeignKey(User, default=0, db_column='memberid', null=False)
-    creator = models.ForeignKey(User, default=0, null=False)
-    last_updated_by = models.ForeignKey(User, default=0, null=False, db_column='lastupdatedby')
+    group_id = models.ForeignKey(RtGroup, default=0, db_column='groupid', null=False)
+    member_id = models.ForeignKey(RtUser, default=0, db_column='memberid', null=False)
+    creator = models.ForeignKey(RtUser, default=0, null=False)
+    last_updated_by = models.ForeignKey(RtUser, default=0, null=False, db_column='lastupdatedby')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
