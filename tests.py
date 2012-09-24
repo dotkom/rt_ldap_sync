@@ -48,3 +48,11 @@ class GroupMember(TestCase):
         RtGroupMember.objects.filter(group=self.group1, member=self.user1).delete()
 
         self.assertEqual(0, RtGroupMember.objects.filter(group=self.group1).count())
+
+    def test_fail_to_add_duplicate_user_to_same_group(self):
+        self.assertEqual(0, RtGroupMember.objects.filter(group=self.group1).count())
+        self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
+        self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
+        self.assertRaises(RtGroupMember.objects.create(group=self.group1, member=self.user1))
+
+    
