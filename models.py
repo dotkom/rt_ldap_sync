@@ -83,8 +83,8 @@ class RtGroup(models.Model):
 class RtGroupMember(models.Model):
     """Represents the 'groupmembers' table in RT"""
     id = models.AutoField(primary_key=True, auto_created=True, default=None)
-    group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
-    member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
+    group = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
+    member = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
     creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='groupmember_creator_set')
     last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='groupmember_last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
