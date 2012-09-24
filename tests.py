@@ -57,3 +57,34 @@ class GroupMember(TestCase):
         self.assertEqual(1, RtGroupMember.objects.filter(group=self.group1).count())
         self.assertRaises(IntegrityError, lambda: RtGroupMember.objects.create(group=self.group1, member=self.user1))
 
+    def test_get_extra_groups_from_ldap(self):
+        self.member = RtGroupMember.objects.create(group=self.group1, member=self.user1)
+
+        ldap_groups = ['dotkom', 'foobar']
+
+        self.assertEquals(['foobar'],  RtGroupMember.objects.extra_ldap_groups(self.user1, ldap_groups))
+
+    def test_extra_groups_from_rt(self):
+        RtGroupMember.objects.create(group=self.group1, member=self.user1)
+        self.group_xdotkom = RtGroup.objects.create(name='xdotkom', domain=USER_DEFINED)
+        RtGroupMember.objects.create(group=self.group_xdotkom, member=self.user1)
+
+        self.assertEqual(2, RtGroupMember.objects.filter(member=self.user1).count())
+
+
+        ldap_groups = ['dotkom']
+
+        self.assertEquals(['xdotkom'], RtGroupMember.objects.extra_rt_groups(self.user1, ldap_groups))
+
+    def test_extra_groups_both_both_sides(self):
+        RtGroupMember.objects.create(group=self.group1, member=self.user1)
+        self.group_xdotkom = RtGroup.objects.create(name='xdotkom', domain=USER_DEFINED)
+        RtGroupMember.objects.create(group=self.group_xdotkom, member=self.user1)
+
+        rt_groups = sorted([x.group.name for x in self.user1.rtgroupmember_set.all()])
+        ldap_groups = ['dotkom', 'trollkom']
+
+        extra_ldap = filter(lambda x: x not in ldap_groups, rt_groups)
+        extra_rt = filter(lambda x: x not in rt_groups, ldap_groups)
+
+        self.assertEqual(['trollkom', 'xdotkom'], sorted(extra_ldap + extra_rt))

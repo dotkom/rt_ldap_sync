@@ -80,6 +80,18 @@ class RtGroup(models.Model):
     class Meta:
         db_table = 'groups'
 
+
+class RtGroupMemberManager(models.Manager):
+    def extra_ldap_groups(self, user, ldap_groups):
+        """Returns a list of ldap groups not added in RT"""
+        rt_groups = [x.group.name for x in self.filter(member=user, group__domain=USER_DEFINED).order_by('group__name').all()]
+        return filter(lambda x: x not in rt_groups, ldap_groups)
+
+    def extra_rt_groups(self, user, ldap_groups):
+        """Returns a list of RT groups that is not a part of ldap_groups"""
+        rt_groups = [x.group.name for x in self.filter(member=user, group__domain=USER_DEFINED).order_by('group__name').all()]
+        return filter(lambda x: x not in ldap_groups, rt_groups)
+
 class RtGroupMember(models.Model):
     """Represents the 'groupmembers' table in RT"""
     id = models.AutoField(primary_key=True, auto_created=True, default=None)
@@ -88,6 +100,8 @@ class RtGroupMember(models.Model):
     creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='groupmember_creator_set')
     last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='groupmember_last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
+
+    objects = RtGroupMemberManager()
 
     class Meta:
         db_table = 'groupmembers'
