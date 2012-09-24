@@ -1,10 +1,7 @@
 """RT LDAP Sync tests"""
 from django.test import TestCase
-from rt_ldap_sync.models import RtGroup
+from rt_ldap_sync.models import RtGroup, USER_DEFINED, RT_QUEUE_ROLE
 
-
-USER_DEFINED = 'UserDefined'
-RT_QUEUE_ROLE = 'RT::Queue-Role'
 
 class Group(TestCase):
     def setUp(self):
