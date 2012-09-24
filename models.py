@@ -10,6 +10,7 @@ USER_ID_DEFAULT = 0
 GROUP_ID_DEFAULT = 0
 
 class RtUser(models.Model):
+    """Represents the 'users' table in RT"""
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200, null=False)
     password = models.CharField(max_length=256)
@@ -48,6 +49,7 @@ class RtUser(models.Model):
 
 
 class RtGroup(models.Model):
+    """Represents the 'groups' table in RT"""
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255)
@@ -63,6 +65,7 @@ class RtGroup(models.Model):
         db_table = 'groups'
 
 class RtGroupMember(models.Model):
+    """Represents the 'groupmembers' table in RT"""
     id = models.IntegerField(primary_key=True)
     group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
     member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
