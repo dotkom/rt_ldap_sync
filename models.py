@@ -11,7 +11,7 @@ GROUP_ID_DEFAULT = 0
 
 class RtUser(models.Model):
     """Represents the 'users' table in RT"""
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, null=False)
     password = models.CharField(max_length=256)
     authtoken = models.CharField(max_length=16)
@@ -42,9 +42,9 @@ class RtUser(models.Model):
     country = models.CharField(max_length=50)
     timezone = models.CharField(max_length=50)
     pgpkey = models.TextField()
-    creator = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='creator_set')
+    creator = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='user_creator_set')
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='last_updated_by_set')
+    last_updated_by = models.ForeignKey('self', default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='user_last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
@@ -53,15 +53,15 @@ class RtUser(models.Model):
 
 class RtGroup(models.Model):
     """Represents the 'groups' table in RT"""
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255)
     domain = models.CharField(max_length=64)
     type = models.CharField(max_length=64)
-    instance = models.IntegerField()
-    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='creator', related_name='creator_set')
+    instance = models.IntegerField(null=True)
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='creator', related_name='group_creator_set')
     created = models.DateTimeField(auto_now=True)
-    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby', related_name='last_updated_by_set')
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, blank=False, db_column='lastupdatedby', related_name='group_last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     def has_group(self, name):
@@ -75,11 +75,11 @@ class RtGroup(models.Model):
 
 class RtGroupMember(models.Model):
     """Represents the 'groupmembers' table in RT"""
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True, auto_created=True, default=None)
     group_id = models.ForeignKey(RtGroup, default=GROUP_ID_DEFAULT, db_column='groupid', null=False)
     member_id = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, db_column='memberid', null=False)
-    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='creator_set')
-    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='last_updated_by_set')
+    creator = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='creator', related_name='groupmember_creator_set')
+    last_updated_by = models.ForeignKey(RtUser, default=USER_ID_DEFAULT, null=False, db_column='lastupdatedby', related_name='groupmember_last_updated_by_set')
     last_updated = models.DateTimeField(auto_now=True, db_column='lastupdated')
 
     class Meta:
