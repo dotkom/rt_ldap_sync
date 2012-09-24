@@ -51,9 +51,13 @@ class RtUser(models.Model):
         db_table = 'users'
 
 
+
+USER_DEFINED = 'UserDefined'
+RT_QUEUE_ROLE = 'RT::Queue-Role'
+
 class RTGroupManager(models.Manager):
     def has_group(self, name):
-        return self.get(name=name)
+        return self.filter(name=name, domain=USER_DEFINED)
 
 class RtGroup(models.Model):
     """Represents the 'groups' table in RT"""
