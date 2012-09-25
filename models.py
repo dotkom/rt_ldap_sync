@@ -4,6 +4,7 @@ Models that represent database tables in RequestTracker
 """
 
 from django.db import models
+from django.db.models import Q
 
 
 USER_ID_DEFAULT = 0
@@ -58,6 +59,17 @@ RT_QUEUE_ROLE = 'RT::Queue-Role'
 class RTGroupManager(models.Manager):
     def has_group(self, name):
         return self.filter(name=name, domain=USER_DEFINED)
+
+    def find_groups_not_listed(self, groups):
+        if not groups:
+            return []
+        groups = sorted(groups)
+
+        rt_groups = [x.name for x in self.filter(domain=USER_DEFINED).order_by('name')]
+        if rt_groups:
+            return filter(lambda x: x not in rt_groups, groups)
+        else:
+            return groups
 
 class RtGroup(models.Model):
     """Represents the 'groups' table in RT"""

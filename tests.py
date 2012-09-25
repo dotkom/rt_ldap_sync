@@ -15,6 +15,7 @@ class User(TestCase):
 class Group(TestCase):
     def setUp(self):
         self.group2 = RtGroup.objects.create(name='awesomegroup', domain=RT_QUEUE_ROLE)
+        self.ldap_groups = ['awesomegroup', 'foo']
 
     def test_returns_null_if_groupname_matches_but_not_user_defined(self):
         self.assertNotEqual(USER_DEFINED, self.group2.domain)
@@ -24,6 +25,38 @@ class Group(TestCase):
         self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
         self.assertEqual(USER_DEFINED, self.group1.domain)
         self.assertTrue(RtGroup.objects.has_group('awesomegroup'))
+
+    def test_missing_ldap_groups(self):
+        self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
+
+
+        self.assertEquals(['foo'], RtGroup.objects.find_groups_not_listed(self.ldap_groups))
+        self.assertEquals(['foo'], RtGroup.objects.find_groups_not_listed(reversed(self.ldap_groups)))
+
+        self.assertEquals(['bar', 'foo'], RtGroup.objects.find_groups_not_listed(self.ldap_groups+['bar']))
+        self.assertEquals(['bar', 'foo'], RtGroup.objects.find_groups_not_listed(['bar']+self.ldap_groups))
+
+    def test_find_groups_not_listed_not_failing_on_empty_list_or_none(self):
+        self.assertEquals([], RtGroup.objects.find_groups_not_listed(None))
+        self.assertEquals([], RtGroup.objects.find_groups_not_listed([]))
+
+        self.group1 = RtGroup.objects.create(name='group', domain=USER_DEFINED)
+        self.assertEquals([], RtGroup.objects.find_groups_not_listed(None))
+        self.assertEquals([], RtGroup.objects.find_groups_not_listed([]))
+
+    def test_find_groups_not_listed_has_all_groups_already(self):
+        self.group1 = RtGroup.objects.create(name='group', domain=USER_DEFINED)
+        self.assertEquals([], RtGroup.objects.find_groups_not_listed(['group']))
+
+    def test_find_groups_not_listed_unsorted_groups_input(self):
+        self.assertEquals(['bar', 'foo'], RtGroup.objects.find_groups_not_listed(['bar', 'foo']))
+        self.assertEquals(['bar', 'foo'], RtGroup.objects.find_groups_not_listed(['foo', 'bar']))
+
+    def test_not_return_if_not_listed_in_ldap_groups(self):
+        self.group1 = RtGroup.objects.create(name='awesomegroup', domain=USER_DEFINED)
+
+        RtGroup.objects.create(name='not_listed_in_ldap_groups', domain=USER_DEFINED)
+        self.assertEquals(['foo'], RtGroup.objects.find_groups_not_listed(self.ldap_groups))
 
 class GroupMember(TestCase):
     """Testcases involving group membership"""
