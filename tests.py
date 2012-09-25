@@ -119,3 +119,24 @@ class GroupMember(TestCase):
         extra_rt = RtGroupMember.objects.extra_rt_groups(self.user1, ldap_groups)
 
         self.assertEqual(['trollkom', 'xdotkom'], sorted(extra_ldap + extra_rt))
+
+class LDAP(TestCase):
+
+    def test_connect_success(self):
+        self.fail('Implement test')
+
+    def test_connect_failes(self):
+        self.fail('Implement test')
+
+    def test_is_connected(self):
+        self.fail('Implement test')
+
+    def test_raise_exception_when_doing_command_and_not_connected(self):
+        self.fail('Implement test')
+
+    def test_get_users(self):
+        self.fail('Implement test')
+
+    def test_get_groups(self):
+        self.fail('Implement test')
+
