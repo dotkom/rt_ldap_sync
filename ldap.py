@@ -102,7 +102,7 @@ class LdapController(object):
         attribute_group_id = 'cn'
         attribute_member = 'memberUid'
 
-        filter = "(&(objectClass=%s)(&(%s=*)(%=%)))".format(
+        filter = "(&(objectClass=%s)(&(%s=*)(%s=%s)))".format(
             filter_object_class,
             attribute_group_id,
             attribute_member,
@@ -111,8 +111,7 @@ class LdapController(object):
         base_filter = "%s,%s".format(base_dn_group, self._search_base)
 
         if self.is_connected():
-            return self.get_connection().search(filter, base_filter,
-            [attribute_group_id, attribute_member])
+            return self._get_search_results(filter, base_filter, [attribute_group_id, attribute_member])
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
