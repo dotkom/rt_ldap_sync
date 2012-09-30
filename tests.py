@@ -279,3 +279,19 @@ class LDAPTestCase(unittest.TestCase):
 
         results = self.module.get_groups('norangsh')
         self.assertEquals(2, len(results))
+
+    def test_get_groups_membership(self):
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = [{'cn': ['dotkom'],
+                                                         'memberUid': ['norangsh',
+                                                                       'dagolap',
+                                                                       'fellingh']}]
+
+        results = self.module.get_groups_member('dotkom')
+
+        import itertools
+        chain = itertools.chain.from_iterable([group['cn'] for group in results])
+        self.assertEquals(['norangsh', 'dagolap', 'fellingh'], list(chain))
+
