@@ -33,7 +33,7 @@ class Command(BaseCommand):
         groups_to_create = RtGroup.objects.find_groups_not_listed(ldap_groups)
         if groups_to_create:
             for group in groups_to_create:
-                RtGroup.objects.create(name=group, typed=USER_DEFINED)
+                RtGroup.objects.create(name=group, type=USER_DEFINED)
 
         tmp_set_for_unique_usernames = set()
         for ldap_groupname in args:
@@ -46,7 +46,6 @@ class Command(BaseCommand):
 
             for group in RtGroupMember.objects.extra_ldap_groups(user, user_groups):
                 RtGroupMember.objects.create(group=RtGroup.objects.get(name=group), member=user)
-
             RtGroupMember.objects.filter(group__in=RtGroupMember.objects.extra_rt_groups(user, user_groups), member=user).delete()
 
 
