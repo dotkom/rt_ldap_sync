@@ -86,6 +86,18 @@ class LdapController(object):
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
+    def get_groups(self):
+        filter_object_class = 'posixGroup'
+        base_dn_group = 'ou=groups'
+
+        filter = "(objectClass=%s)".format(filter_object_class)
+        base_filter = "%s,%s".format(base_dn_group, self._search_base)
+
+        if self.is_connected():
+            return self._get_search_results(filter, base_filter, ['cn'])
+        else:
+            raise simpleldap.ConnectionException('You need to be connected')
+
     def get_groups(self, username, search_options=None):
         """Get group given user name
 
