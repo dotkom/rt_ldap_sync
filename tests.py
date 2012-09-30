@@ -292,6 +292,7 @@ class LDAPTestCase(unittest.TestCase):
         results = self.module.get_groups_member('dotkom')
 
         import itertools
-        chain = itertools.chain.from_iterable([group['cn'] for group in results])
+        chain = itertools.chain.from_iterable([group['memberUid'] for group in results])
         self.assertEquals(['norangsh', 'dagolap', 'fellingh'], list(chain))
+
 
