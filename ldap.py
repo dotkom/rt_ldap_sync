@@ -127,5 +127,36 @@ class LdapController(object):
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
+    def get_groups_member(self, groupname, search_options=None):
+        """Get group given user name
+
+        :username groupmembership for given username
+        :search_options search meta for group fetching:
+
+        GroupTye (Static|Dynamic), BaseDN, Group Subtree,
+        ObjectClass, GroupIDAttribute, GroupMemberAttribute,
+        GroupMemeberFormat"""
+
+        is_group_type_static = True
+        base_dn_group = 'ou=groups'
+        filter_object_class = 'posixGroup'
+        attribute_group_id = 'cn'
+        attribute_member = 'memberUid'
+
+        filter = "(&(objectClass=%s)(&(%s=%s)))".format(
+            filter_object_class,
+            attribute_group_id,
+            groupname
+        )
+        base_filter = "%s,%s".format(base_dn_group, self._search_base)
+
+        if self.is_connected():
+            results = self._get_search_results(filter, base_filter, [attribute_group_id, attribute_member])
+            size_results = len(results)
+            if size_results < 0 or size_results > 1:
+                raise ValueError('Too many groups returned, be more explicit in your search')
+            return results
+        else:
+            raise simpleldap.ConnectionException('You need to be connected')
 
 
