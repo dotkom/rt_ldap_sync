@@ -295,4 +295,20 @@ class LDAPTestCase(unittest.TestCase):
         chain = itertools.chain.from_iterable([group['memberUid'] for group in results])
         self.assertEquals(['norangsh', 'dagolap', 'fellingh'], list(chain))
 
+    def test_get_groups_membership_too_many_groups_returned(self):
+        # This case should never happen tho
+        # as CN has to be unique.
+
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = [{'cn': ['dotkom'],
+                                                         'memberUid': ['norangsh',
+                                                                       'dagolap',
+                                                                       'fellingh']},
+                                                        {'cn': ['dotfood'],
+                                                         'memberUid': ['norangsh',
+                                                                       'dagolap',
+                                                                       'fellingh']}]
+        self.assertRaises(ValueError, lambda: self.module.get_groups_member('dot'))
 
