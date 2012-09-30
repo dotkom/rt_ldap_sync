@@ -227,6 +227,16 @@ class LDAPTestCase(unittest.TestCase):
 
         self.assertEquals(2, len(results))
 
+    def test_get_users_usernames(self):
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = [{'cn': ['tadaa'], 'objectclass': ['account', 'posixAccount'], 'loginshell': ['/bin/bash'], 'uidnumber': ['1000'], 'gidnumber': ['1000'], 'gecos': ['Rockj'], 'homedirectory': ['/home/rockj'], 'uid': ['tadaa']}, {'cn': ['jadda'], 'objectclass': ['account', 'posixAccount'], 'loginshell': ['/bin/bash'], 'uidnumber': ['1001'], 'gidnumber': ['1001'], 'gecos': ['Rasasd'], 'homedirectory': ['/home/sdaf'], 'uid': ['jadda']}]
+
+        results = self.module.get_users()
+        self.assertEquals(2, len(results))
+
     def test_get_groups_no_groups(self):
         self._mock_valid_connection()
         self.assertTrue(self.module.connect('foo', 1))
@@ -269,4 +279,3 @@ class LDAPTestCase(unittest.TestCase):
 
         results = self.module.get_groups('norangsh')
         self.assertEquals(2, len(results))
-        self.assertEquals([['dotkom'], ['komiteer']], [group['cn'] for group in results])
