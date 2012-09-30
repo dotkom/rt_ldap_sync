@@ -102,7 +102,7 @@ class LdapController(object):
         attribute_group_id = 'cn'
         attribute_member = 'memberUid'
 
-        filter = "(&(objectClass=%s)(&(%s=*)(%=%)".format(
+        filter = "(&(objectClass=%s)(&(%s=*)(%=%)))".format(
             filter_object_class,
             attribute_group_id,
             attribute_member,
