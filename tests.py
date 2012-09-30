@@ -269,3 +269,4 @@ class LDAPTestCase(unittest.TestCase):
 
         results = self.module.get_groups('norangsh')
         self.assertEquals(2, len(results))
+        self.assertEquals([['dotkom'], ['komiteer']], [group['cn'] for group in results])
