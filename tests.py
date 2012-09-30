@@ -226,3 +226,46 @@ class LDAPTestCase(unittest.TestCase):
         results = self.module.get_users()
 
         self.assertEquals(2, len(results))
+
+    def test_get_groups_no_groups(self):
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = []
+        results = self.module.get_groups('unknown_user')
+
+        self.assertEquals(0, len(results))
+
+    def test_get_groups_for_user_single_row(self):
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = [{'cn': ['dotkom'],
+                                                         'gidNumber': ['22'],
+                                                         'memberUid': ['fellingh',
+                                                                       'norangsh'
+                                                                       'dagolap'],
+                                                         'objectClass': ['posixGroup', 'top']}]
+        results = self.module.get_groups('norangsh')
+
+        self.assertEquals(1, len(results))
+
+    def test_get_groups_for_user_multiple_rows(self):
+        self._mock_valid_connection()
+        self.assertTrue(self.module.connect('foo', 1))
+        self.module._get_search_results = mock.MagicMock(name='ldap._get_search_results')
+        self.module._get_search_results.return_value = [{'cn': ['dotkom'],
+                                                         'gidNumber': ['42'],
+                                                         'memberUid': ['glennrub',
+                                                                       'fellingh',
+                                                                       'norangsh'],
+                                                         'objectClass': ['posixGroup', 'top']},
+                                                        {'cn': ['komiteer'],
+                                                         'gidNumber': ['69'],
+                                                         'memberUid': ['glennrub',
+                                                                       'dagolap',
+                                                                       'norangsh'],
+                                                         'objectClass': ['posixGroup', 'top']}]
+
+        results = self.module.get_groups('norangsh')
+        self.assertEquals(2, len(results))
