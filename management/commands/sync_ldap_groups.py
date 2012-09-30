@@ -16,25 +16,27 @@ Process one user at the time and do:
 * Remove groups that the user isn't associated with anylonger in LDAP
 """
 from django.core.management import BaseCommand
+import itertools
+from rt_ldap_sync.ldap import LdapController
 from rt_ldap_sync.models import RtGroup, RtUser, RtGroupMember, USER_DEFINED
 
 class Command(BaseCommand):
+    args = '<ldap_group> <ldap_group ...>'
     help = 'Synchronizes the LDAP groups and membership to RequestTracker'
 
     def handle(self, *args, **options):
-        self.ldap_username_list =['norangsh', 'sigurf']
-        self.ldap_user_group_map = {
-            'norangsh': ['xdotkom'],
-            'sigurf': ['dotkom']
-        }
+        self.ldap = LdapController()
+        ldap_groups = list(itertools.chain.from_iterable([group['cn'] for group in self.ldap.get_groups()]))
 
-        self.stdout.write("This management command doesn't exactly nothing atm!")
-        groups_to_create = RtGroup.objects.find_groups_not_listed(['dotkom', 'xdotkom'])
+        groups_to_create = RtGroup.objects.find_groups_not_listed(ldap_groups)
         if groups_to_create:
             for group in groups_to_create:
                 RtGroup.objects.create(name=group, typed=USER_DEFINED)
 
-        ldap_username_list = ['norangsh', 'sigurf']
+        tmp_set_for_unique_usernames = set()
+        for ldap_groupname in args:
+            tmp_set_for_unique_usernames.update(self.ldap.get_groups_member(ldap_groupname))
+        ldap_username_list = list(tmp_set_for_unique_usernames)
 
         rt_users = RtUser.objects.filter(name__in=ldap_username_list)
         for user in rt_users:
@@ -47,7 +49,4 @@ class Command(BaseCommand):
 
 
     def _get_groups_from_ldap_user(self, ldap_username):
-        try:
-            return self.ldap_user_group_map[ldap_username]
-        except KeyError:
-            return []
+        return self.ldap.get_groups(ldap_username)
