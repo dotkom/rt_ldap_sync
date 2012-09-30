@@ -61,8 +61,8 @@ class LdapController(object):
         return self._connection
 
 
-    def _get_search_results(self, filter, base_dn, attributes):
-        return self.get_connection().search(filter, base_dn, attributes)
+    def _get_search_results(self, ldap_filter, base_dn, attributes):
+        return self.get_connection().search(ldap_filter, base_dn, attributes)
 
     def get_users(self, search_options=None):
         """Get users from LDAP
@@ -90,11 +90,12 @@ class LdapController(object):
         filter_object_class = 'posixGroup'
         base_dn_group = 'ou=groups'
 
-        filter = "(objectClass=%s)".format(filter_object_class)
-        base_filter = "%s,%s".format(base_dn_group, self._search_base)
+        ldap_filter = "(objectClass={0})".format(filter_object_class)
+        base_filter = "{0},{1}".format(base_dn_group, self._search_base)
 
         if self.is_connected():
-            return self._get_search_results(filter, base_filter, ['cn'])
+            print ldap_filter, base_filter, ['cn']
+            return self._get_search_results(ldap_filter, base_filter, ['cn'])
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
@@ -114,16 +115,16 @@ class LdapController(object):
         attribute_group_id = 'cn'
         attribute_member = 'memberUid'
 
-        filter = "(&(objectClass=%s)(&(%s=*)(%s=%s)))".format(
+        ldap_filter = "(&(objectClass={0})(&({1}=*)({2}={3})))".format(
             filter_object_class,
             attribute_group_id,
             attribute_member,
             username
         )
-        base_filter = "%s,%s".format(base_dn_group, self._search_base)
+        base_filter = "{0},{1}".format(base_dn_group, self._search_base)
 
         if self.is_connected():
-            return self._get_search_results(filter, base_filter, [attribute_group_id, attribute_member])
+            return self._get_search_results(ldap_filter, base_filter, [attribute_group_id, attribute_member])
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
@@ -143,15 +144,15 @@ class LdapController(object):
         attribute_group_id = 'cn'
         attribute_member = 'memberUid'
 
-        filter = "(&(objectClass=%s)(&(%s=%s)))".format(
+        ldap_filter = "(&(objectClass={0})(&({1}={2})))".format(
             filter_object_class,
             attribute_group_id,
             groupname
         )
-        base_filter = "%s,%s".format(base_dn_group, self._search_base)
+        base_filter = "{0},{1}".format(base_dn_group, self._search_base)
 
         if self.is_connected():
-            results = self._get_search_results(filter, base_filter, [attribute_group_id, attribute_member])
+            results = self._get_search_results(ldap_filter, base_filter, [attribute_group_id, attribute_member])
             size_results = len(results)
             if size_results < 0 or size_results > 1:
                 raise ValueError('Too many groups returned, be more explicit in your search')

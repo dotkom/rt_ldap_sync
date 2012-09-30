@@ -19,6 +19,7 @@ from django.core.management import BaseCommand
 import itertools
 from rt_ldap_sync.ldap import LdapController
 from rt_ldap_sync.models import RtGroup, RtUser, RtGroupMember, USER_DEFINED
+from rt_ldap_sync.settings import LDAP_HOSTNAME, LDAP_PORT, LDAP_BASE_SEARCH, LDAP_PROTOCOL
 
 class Command(BaseCommand):
     args = '<ldap_group> <ldap_group ...>'
@@ -26,7 +27,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.ldap = LdapController()
-        ldap_groups = list(itertools.chain.from_iterable([group['cn'] for group in self.ldap.get_groups()]))
+        self.ldap.connect(LDAP_HOSTNAME, LDAP_PORT, LDAP_BASE_SEARCH, LDAP_PROTOCOL)
+        ldap_groups = list(itertools.chain.from_iterable([group['cn'] for group in self.ldap.get_groups_all()]))
 
         groups_to_create = RtGroup.objects.find_groups_not_listed(ldap_groups)
         if groups_to_create:
