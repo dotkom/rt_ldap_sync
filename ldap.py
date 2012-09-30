@@ -86,7 +86,7 @@ class LdapController(object):
         else:
             raise simpleldap.ConnectionException('You need to be connected')
 
-    def get_groups(self):
+    def get_groups_all(self):
         filter_object_class = 'posixGroup'
         base_dn_group = 'ou=groups'
 
